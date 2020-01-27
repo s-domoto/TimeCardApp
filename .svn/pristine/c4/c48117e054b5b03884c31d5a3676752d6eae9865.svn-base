@@ -1,0 +1,37 @@
+package main;
+
+import javax.annotation.PostConstruct;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.SpringApplication;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
+
+import main.model.WorkingTimeEntity;
+import main.repository.TimeCardRepository;
+
+@SpringBootApplication
+public class SpringBootAppApplication {
+	@Autowired
+	TimeCardRepository repository;
+
+	public static void main(String[] args) {		
+		SpringApplication.run(SpringBootAppApplication.class, args);
+	}
+
+/*
+	@PostConstruct
+	public void initialData() {
+
+		repository.save(new WorkingTimeEntity("aaa", "bbb"));
+		repository.save(new WorkingTimeEntity("ccc", "ddd"));
+		repository.flush();
+
+	}
+*/
+/*	@PostConstruct
+	public void initialData() {
+		repository.save(new WorkingTimeEntity("test1","test2"));
+		repository.flush();
+	}
+*/
+}

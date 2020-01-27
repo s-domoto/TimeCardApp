@@ -1,0 +1,49 @@
+package model;
+
+import javax.persistence.Entity;
+import javax.persistence.Id;
+import javax.persistence.Table;
+import javax.persistence.GeneratedValue;
+
+@Entity
+@Table(name="test")
+public class WorkingTimeEntity {
+	
+	@Id
+	@GeneratedValue
+	private String timeCardNo;
+	private String inTime;
+	private String outTime;
+	
+	public WorkingTimeEntity() {
+		super();
+	}
+	
+	public WorkingTimeEntity(String inTime, String outTime) {
+		super();
+		this.inTime = inTime;
+		this.outTime = outTime;
+		
+	}
+	
+	public String getTimeCardNo() {
+        return this.timeCardNo;
+    }
+	public String getInTime() {
+        return this.inTime;
+    }
+	public String getOutTime() {
+        return this.outTime;
+    }
+/*	public void setTimeCardNo(String timeCardNo) {
+		this.timeCardNo = timeCardNo;
+	}
+*/
+	public void setInTIme(String inTime) {
+		this.inTime = inTime;
+	}
+	public void setOutTime(String outTime) {
+		this.outTime = outTime;
+	}
+}
+	

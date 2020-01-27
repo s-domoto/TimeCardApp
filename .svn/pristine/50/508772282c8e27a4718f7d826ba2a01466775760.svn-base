@@ -1,0 +1,26 @@
+/**
+ * 
+ */
+var msg = "";
+function showClock1() {
+	   var nowTime = new Date();
+	   var nowHour = nowTime.getHours();
+	   var nowMin  = nowTime.getMinutes();
+	   var nowSec  = nowTime.getSeconds();
+	   msg = nowHour + ":" + nowMin + ":" + nowSec;
+	   document.getElementById("RealtimeClockArea").innerHTML = msg;
+}
+setInterval('showClock1()',1000);
+
+$(function(){
+	$(".btn-in").on('click', function() {
+		if($(".btn-in").text() == "IN"){
+				$(".btn-in").text(msg);
+			}
+	});
+	$(".btn-out").on('click', function() {
+		if($(".btn-out").text() == "OUT"){
+				$(".btn-out").text(msg);
+			}
+	});
+})

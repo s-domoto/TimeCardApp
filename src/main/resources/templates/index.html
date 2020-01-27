@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+<link href="/css/indexCss.css" th:href="@{/css/indexCss.css}" rel="stylesheet"></link>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+<script src="/js/indexJs.js" th:src="@{/js/indexJs.js}"></script>
+<title>TimeCard</title>
+</head>
+<body>
+<div class="header">
+	<a class="login" th:text="${userDataInfo}">ログイン</a>
+</div>
+<p id="todayDisp"></p>
+<p id="nowtimeDisp"></p>
+ <form method="post" action="/inTimeForm">
+	<button th:text="${inTimeText}" type="submit" class="btn-in" name="inTime" >IN</button> 
+ </form>
+ <form method="post" action="/outTimeForm">
+	<button th:text="${outTimeText}" type="submit" class="btn-out" name="outTime" >out</button> 
+ </form>
+</body>
+</html>
