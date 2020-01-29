@@ -87,13 +87,31 @@ public class TimeCardController {
 	}
 
 	@RequestMapping(value = "/inTimeForm", method = RequestMethod.POST)
-	public String inTimeInsert( Model model) {
-		// 引数で日付、時間を取ってくる
-		timeCardRepo.InsertWorkingTime(workingTimeList.get(0).getUserId(),
-														workingTimeList.get(0).getDate(),
-														workingTimeList.get(0).getInTime(),
-														workingTimeList.get(0).getOutTime());
-		return "index";
+	public String inTimeInsert( Model model, @RequestParam("inTime") String inTime) {
+		
+		workingTimeList = timeCardRepo.findWorkingTime(workingTimeList.get(0).getUserId());
+		
+		String[] inTimeArray = inTime.split(",", 0);
+		
+		if(workingTimeList.get(0).getInTime().isEmpty() && workingTimeList.get(0).getOutTime().isEmpty()) {
+			timeCardRepo.insertWorkingTime(workingTimeList.get(0).getUserId(),
+															inTimeArray[0],
+															inTimeArray[1],
+															" ");
+			model.addAttribute("inTimeText", inTimeArray[1]);
+			model.addAttribute("outTimeText", "OUT");
+			return "index";
+
+		}else if(!(workingTimeList.get(0).getInTime().isEmpty())) {
+			model.addAttribute("inTimeText", inTimeArray[1]);
+			model.addAttribute("outTimeText", "OUT");
+			return "index";
+
+		}else {
+			model.addAttribute("inTimeText", "IN");
+			model.addAttribute("outTimeText", "OUT");
+			return "index";
+		}
 	}
 
 //	@RequestMapping(value = "/inTimeForm", method = RequestMethod.POST)

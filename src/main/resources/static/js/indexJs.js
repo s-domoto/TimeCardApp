@@ -23,7 +23,9 @@ $(function(){
 	$(".btn-in").on('click', function() {
 		if($(".btn-in").text() == "IN"){
 				$(".btn-in").text(nowTime);
-				$(".btn-in").val(nowTime);
+				let date = today + "," + nowTime;
+				$(".btn-in").val(date);
+;
 			}
 	});
 	$(".btn-out").on('click', function() {

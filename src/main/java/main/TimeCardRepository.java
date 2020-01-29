@@ -2,7 +2,10 @@ package main;
 
 import java.util.List;
 
+import javax.transaction.Transactional;
+
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
@@ -21,6 +24,9 @@ public interface TimeCardRepository extends JpaRepository<WorkingTimeEntity, Str
 			"ORDER BY B.TIMECARDNO DESC LIMIT 1;", nativeQuery = true)
 	List<WorkingTimeEntity> findWorkingTime(@Param("userId") String userId);
 	
+	
 	@Query(value="INSERT INTO TIMECARD VALUES(0, :userId, :date, :inTime, :outTime);", nativeQuery = true)
-	List<WorkingTimeEntity> InsertWorkingTime(@Param("userId") String userId,@Param("date") String date, @Param("inTime") String inTime, @Param("outTime") String outTime);
+	@Modifying
+	@Transactional
+	int insertWorkingTime(@Param("userId") String userId,@Param("date") String date, @Param("inTime") String inTime, @Param("outTime") String outTime);
 }
