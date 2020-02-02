@@ -21,12 +21,19 @@ public interface TimeCardRepository extends JpaRepository<WorkingTimeEntity, Str
 			"ON A.USERID = B.USERID " + 
 			"WHERE " + 
 			"A.USERID = :userId " + 
-			"ORDER BY B.TIMECARDNO DESC LIMIT 1;", nativeQuery = true)
+			"ORDER BY B.TIMECARDNO DESC LIMIT 1", nativeQuery = true)
 	List<WorkingTimeEntity> findWorkingTime(@Param("userId") String userId);
 	
+	@Query(value="SELECT * FROM TIMECARD WHERE USERID = :userId", nativeQuery = true)
+	List<WorkingTimeEntity> findAllWorkingTime(@Param("userId") String userId);
 	
-	@Query(value="INSERT INTO TIMECARD VALUES(0, :userId, :date, :inTime, :outTime);", nativeQuery = true)
+	@Query(value="INSERT INTO TIMECARD VALUES(0, :userId, :date, :inTime, :outTime)", nativeQuery = true)
 	@Modifying
 	@Transactional
-	int insertWorkingTime(@Param("userId") String userId,@Param("date") String date, @Param("inTime") String inTime, @Param("outTime") String outTime);
+	int insertWorkingTime(@Param("userId") String userId, @Param("date") String date, @Param("inTime") String inTime, @Param("outTime") String outTime);
+	
+	@Query(value="UPDATE TIMECARD SET OUTTIME = :outTime WHERE TIMECARDNO = :timeCardNo", nativeQuery = true)
+	@Modifying
+	@Transactional
+	int updateOutTime(@Param("timeCardNo") String timeCardNo, @Param("outTime") String outTime);
 }

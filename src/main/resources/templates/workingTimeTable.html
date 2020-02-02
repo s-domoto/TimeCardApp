@@ -5,31 +5,22 @@
 <link href="/css/indexCss.css" th:href="@{/css/indexCss.css}" rel="stylesheet"></link>
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
 <script src="/js/indexJs.js" th:src="@{/js/indexJs.js}"></script>
-<title>TimeCard</title>
+<title>TimeCardTable</title>
 </head>
 <body>
 <div class="header">
 	<a class="login" th:text="${userDataInfo}">ログイン</a>
 </div>
-<p id="todayDisp"></p>
-<p id="nowtimeDisp"></p>
- <form method="post" action="/inTimeForm">
-	<button th:text="${inTimeText}" type="submit" class="btn-in" name="inTime" >IN</button> 
- </form>
- <form method="post" action="/outTimeForm">
-	<button th:text="${outTimeText}" type="submit" class="btn-out" name="outTime" >out</button> 
- </form>
-<form action="#" th:action="@{/workingTimeTable}" method="post">
-	<button th:text="${workingTimeTable}" type="submit" class="btn-table" name="workingTimeTable" >勤務表</button> 
-</form>
- <!--
  <table border="1">
  	<tr th:each="workingTime : ${workingTimeList}" th:object="${workingTime}">
- 		<td th:text="*{timeCardNo}"></td>
+ 		<td th:text="*{userId}"></td>
+ 		<td th:text="*{date}"></td>
  		<td th:text="*{inTime}"></td>
  		<td th:text="*{outTime}"></td>
  	</tr>
 </table>
--->
+<form action="#" th:action="@{/index}" method="get">
+	<button type="submit" class="btn-return" name="return" >戻る</button> 
+</form>
 </body>
 </html>

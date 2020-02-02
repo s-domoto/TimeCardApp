@@ -1,5 +1,7 @@
 package main;
  
+import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -36,14 +38,28 @@ public class TimeCardController {
 		return "login";
 	}
 	@RequestMapping(value = "/index", method = RequestMethod.GET)
-	String getIndex() {
+	String getIndex(Model model) {
+		Collections.reverse(workingTimeList);;
+		
+		if(workingTimeList.get(0).getInTime().isEmpty()) {
+			model.addAttribute("inTimeText", "IN");
+		}else {
+			model.addAttribute("inTimeText", workingTimeList.get(0).getInTime());
+		}
+		if(workingTimeList.get(0).getOutTime().isEmpty()) {
+			model.addAttribute("outTimeText", "OUT");
+		}else {
+			model.addAttribute("outTimeText", workingTimeList.get(0).getOutTime());
+		}
+		model.addAttribute("workingTimeTable", "勤務表");
 		return "index";
 	}
 
-//	@RequestMapping(value = "loginForm", method = RequestMethod.GET)
-//	String getLoginForm(Model model) {
-//		return "login";
-//	}
+	@RequestMapping(value = "/workingTimeTable", method = RequestMethod.GET)
+	String getWorkingTimeTable() {
+		
+		return "workingTimeTable";
+	}
 
 	@RequestMapping(value = "/index", method = RequestMethod.POST)
 	String postLoginForm(Model model,@RequestParam("id") String id, @RequestParam("pass") String pass) {		
@@ -56,24 +72,31 @@ public class TimeCardController {
 		} else {
 			workingTimeList = timeCardRepo.findWorkingTime(id);
 			
-			if (!(workingTimeList.get(0).getOutTime().isEmpty())) {
+			// 出社打刻・退社打刻ともにされていない場合は「IN」、「OUT」をj表示
+			if (!(workingTimeList.get(0).getInTime().isEmpty()) && !(workingTimeList.get(0).getOutTime().isEmpty())) {
 				model.addAttribute("inTimeText", "IN");	
 				model.addAttribute("outTimeText", "OUT");
+				model.addAttribute("workingTimeTable", "勤務表");
 				return "index";
 			}
 			
+			// 出社打刻がされていない場合は「IN」、されている場合は出社時間を表示
 			if (workingTimeList.get(0).getInTime().isEmpty()) {
 				model.addAttribute("inTimeText", "IN");	
 			}else {
 				model.addAttribute("inTimeText", workingTimeList.get(0).getInTime());				
-			}			
+			}
+			//　退社打刻がされていない場合は「OUT」、されている場合は退社時間を表示
 			if(workingTimeList.get(0).getOutTime().isEmpty()) {
 				model.addAttribute("outTimeText", "OUT");
 			}else {
 				model.addAttribute("outTimeText", workingTimeList.get(0).getOutTime());
 			}
+			// ユーザー名を表示
 			model.addAttribute("userDataInfo", userData.get(0).getName());
-			model.addAttribute("workingTimeList", workingTimeList);
+			// 確認要
+//			model.addAttribute("workingTimeList", workingTimeList);
+			model.addAttribute("workingTimeTable", "勤務表");
 			return "index";
 		}
 	}
@@ -91,22 +114,28 @@ public class TimeCardController {
 		
 		workingTimeList = timeCardRepo.findWorkingTime(workingTimeList.get(0).getUserId());
 		
+		// 日付と時間に分割
 		String[] inTimeArray = inTime.split(",", 0);
-		
+		// 出社打刻・退社打刻ともにされていない場合は出社打刻する
 		if(workingTimeList.get(0).getInTime().isEmpty() && workingTimeList.get(0).getOutTime().isEmpty()) {
 			timeCardRepo.insertWorkingTime(workingTimeList.get(0).getUserId(),
 															inTimeArray[0],
 															inTimeArray[1],
-															" ");
+															"");
 			model.addAttribute("inTimeText", inTimeArray[1]);
 			model.addAttribute("outTimeText", "OUT");
 			return "index";
 
-		}else if(!(workingTimeList.get(0).getInTime().isEmpty())) {
-			model.addAttribute("inTimeText", inTimeArray[1]);
+		}else if(!(workingTimeList.get(0).getInTime().isEmpty()) || workingTimeList.get(0).getOutTime().isEmpty()) {
+			model.addAttribute("inTimeText", workingTimeList.get(0).getInTime());
 			model.addAttribute("outTimeText", "OUT");
 			return "index";
 
+		}else if(!(workingTimeList.get(0).getInTime().isEmpty()) || !(workingTimeList.get(0).getOutTime().isEmpty())) {
+			model.addAttribute("inTimeText", workingTimeList.get(0).getInTime());
+			model.addAttribute("outTimeText", workingTimeList.get(0).getOutTime());
+			return "index";
+			
 		}else {
 			model.addAttribute("inTimeText", "IN");
 			model.addAttribute("outTimeText", "OUT");
@@ -114,6 +143,46 @@ public class TimeCardController {
 		}
 	}
 
+	@RequestMapping(value = "/outTimeForm", method = RequestMethod.GET)
+	public String getOutTimeForm(
+		@RequestParam(value="outTime", required = false)
+		Model model) {
+		return "index";
+	}
+
+	@RequestMapping(value = "/outTimeForm", method = RequestMethod.POST)
+	public String outTimeUpdate( Model model, @RequestParam("outTime") String outTime) {
+		
+		workingTimeList = timeCardRepo.findWorkingTime(workingTimeList.get(0).getUserId());
+		String[] outTimeArray = outTime.split(",", 0);
+		String timeCardNo = String.valueOf((workingTimeList.get(0).getTimeCardNo()));
+		
+		if(workingTimeList.get(0).getOutTime().isEmpty()) {
+			if(workingTimeList.get(0).getDate() != outTimeArray[0]) {
+				model.addAttribute("inTimeText", workingTimeList.get(0).getInTime());
+				model.addAttribute("outTimeText", "OUT");
+//				model.addAttribute("outTimeText", "日付が違うため退社打刻はできません。");
+				return "index";
+			}else {
+			timeCardRepo.updateOutTime(timeCardNo,
+										outTimeArray[1]);
+			model.addAttribute("inTimeText", workingTimeList.get(0).getInTime());
+			model.addAttribute("outTimeText", outTimeArray[1]);
+			return "index";
+			}
+		}else {
+			model.addAttribute("outTimeText", workingTimeList.get(0).getOutTime());
+			return "index";
+		}
+	}
+
+	@RequestMapping(value = "/workingTimeTable", method = RequestMethod.POST)
+	public String dispWorkingTimeTable(Model model) {
+		workingTimeList = timeCardRepo.findAllWorkingTime(workingTimeList.get(0).getUserId());
+		model.addAttribute("workingTimeList", workingTimeList);
+		return "workingTimeTable";
+	}
+	
 //	@RequestMapping(value = "/inTimeForm", method = RequestMethod.POST)
 //	public String inTimeInsert(
 //		@RequestParam(value="inTime", required = false) String inTimeStr,
