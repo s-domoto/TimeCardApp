@@ -1,6 +1,5 @@
 package main;
  
-import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
@@ -16,7 +15,6 @@ import org.springframework.ui.Model;
 public class TimeCardController {
 	
 
-//	TimeCardService service;
 	@Autowired
 	TimeCardRepository timeCardRepo;
 	@Autowired
@@ -24,21 +22,14 @@ public class TimeCardController {
 	
 	List<UserInfoEntity> userData;
 	List<WorkingTimeEntity> workingTimeList;
-	
-//	@RequestMapping(value = "/", method = RequestMethod.GET)
-//	String index(Model model) {
-//		List<WorkingTimeEntity> workingTimeList = timeCardRepo.findAll();
-//		model.addAttribute("workingTimeList", workingTimeList);
-//		model.addAttribute("inTimeText", "IN");
-//		return "index";
-//	}
-	
-	@RequestMapping(value = "/login", method = RequestMethod.GET)
-	String getLogin() {
-		return "login";
-	}
+
+
 	@RequestMapping(value = "/index", method = RequestMethod.GET)
-	String getIndex(Model model) {
+	String getIndex() {
+		return "index";
+	}
+	@RequestMapping(value = "/main", method = RequestMethod.GET)
+	String getMain(Model model) {
 		Collections.reverse(workingTimeList);;
 		
 		if(workingTimeList.get(0).getInTime().isEmpty()) {
@@ -52,7 +43,7 @@ public class TimeCardController {
 			model.addAttribute("outTimeText", workingTimeList.get(0).getOutTime());
 		}
 		model.addAttribute("workingTimeTable", "勤務表");
-		return "index";
+		return "main";
 	}
 
 	@RequestMapping(value = "/workingTimeTable", method = RequestMethod.GET)
@@ -61,14 +52,14 @@ public class TimeCardController {
 		return "workingTimeTable";
 	}
 
-	@RequestMapping(value = "/index", method = RequestMethod.POST)
-	String postLoginForm(Model model,@RequestParam("id") String id, @RequestParam("pass") String pass) {		
+	@RequestMapping(value = "/main", method = RequestMethod.POST)
+	String postIndexForm(Model model,@RequestParam("id") String id, @RequestParam("pass") String pass) {		
 
 		userData = userInfoRepo.findUserInfo(id, pass);		
 
 		if (userData.isEmpty()) {
 			model.addAttribute("userDataInfo", "ユーザIDもしくはパスワードが正しくありません。");
-			return "login";
+			return "index";
 		} else {
 			workingTimeList = timeCardRepo.findWorkingTime(id);
 			
@@ -77,7 +68,7 @@ public class TimeCardController {
 				model.addAttribute("inTimeText", "IN");	
 				model.addAttribute("outTimeText", "OUT");
 				model.addAttribute("workingTimeTable", "勤務表");
-				return "index";
+				return "main";
 			}
 			
 			// 出社打刻がされていない場合は「IN」、されている場合は出社時間を表示
@@ -97,7 +88,7 @@ public class TimeCardController {
 			// 確認要
 //			model.addAttribute("workingTimeList", workingTimeList);
 			model.addAttribute("workingTimeTable", "勤務表");
-			return "index";
+			return "main";
 		}
 	}
 
@@ -106,7 +97,7 @@ public class TimeCardController {
 		@RequestParam(value="inTime", required = false)
 		Model model) {
 //		model.addAttribute("inTimeText", "IN");
-		return "index";
+		return "main";
 	}
 
 	@RequestMapping(value = "/inTimeForm", method = RequestMethod.POST)
@@ -124,22 +115,22 @@ public class TimeCardController {
 															"");
 			model.addAttribute("inTimeText", inTimeArray[1]);
 			model.addAttribute("outTimeText", "OUT");
-			return "index";
+			return "main";
 
 		}else if(!(workingTimeList.get(0).getInTime().isEmpty()) || workingTimeList.get(0).getOutTime().isEmpty()) {
 			model.addAttribute("inTimeText", workingTimeList.get(0).getInTime());
 			model.addAttribute("outTimeText", "OUT");
-			return "index";
+			return "main";
 
 		}else if(!(workingTimeList.get(0).getInTime().isEmpty()) || !(workingTimeList.get(0).getOutTime().isEmpty())) {
 			model.addAttribute("inTimeText", workingTimeList.get(0).getInTime());
 			model.addAttribute("outTimeText", workingTimeList.get(0).getOutTime());
-			return "index";
+			return "main";
 			
 		}else {
 			model.addAttribute("inTimeText", "IN");
 			model.addAttribute("outTimeText", "OUT");
-			return "index";
+			return "main";
 		}
 	}
 
@@ -147,7 +138,7 @@ public class TimeCardController {
 	public String getOutTimeForm(
 		@RequestParam(value="outTime", required = false)
 		Model model) {
-		return "index";
+		return "main";
 	}
 
 	@RequestMapping(value = "/outTimeForm", method = RequestMethod.POST)
@@ -162,17 +153,17 @@ public class TimeCardController {
 				model.addAttribute("inTimeText", workingTimeList.get(0).getInTime());
 				model.addAttribute("outTimeText", "OUT");
 //				model.addAttribute("outTimeText", "日付が違うため退社打刻はできません。");
-				return "index";
+				return "main";
 			}else {
 			timeCardRepo.updateOutTime(timeCardNo,
 										outTimeArray[1]);
 			model.addAttribute("inTimeText", workingTimeList.get(0).getInTime());
 			model.addAttribute("outTimeText", outTimeArray[1]);
-			return "index";
+			return "main";
 			}
 		}else {
 			model.addAttribute("outTimeText", workingTimeList.get(0).getOutTime());
-			return "index";
+			return "main";
 		}
 	}
 
@@ -182,54 +173,5 @@ public class TimeCardController {
 		model.addAttribute("workingTimeList", workingTimeList);
 		return "workingTimeTable";
 	}
-	
-//	@RequestMapping(value = "/inTimeForm", method = RequestMethod.POST)
-//	public String inTimeInsert(
-//		@RequestParam(value="inTime", required = false) String inTimeStr,
-//		Model model) {
-//		if (inTimeStr=="IN") {
-//			
-//		}
-//		else {
-//			model.addAttribute("inTimeText", inTimeStr);
-//		}
-//		return "index";
-//	}
-	
-//	@RequestMapping(value = "/", method = RequestMethod.POST)
-//	public String form(@RequestParam(name = "find", required = false) String inTime, Model model) {
-//		List<WorkingTimeEntity> workingTimeList = repository.findByinTime(inTime);
-//		model.addAttribute("value", inTime);
-//		model.addAttribute("workingTimeList", workingTimeList);
-//		return "index";
-//	}
-/*
-	List<WorkingTimeEntity> getWorkingTimeData() {
-		return service.findAll();
-		}
-*/
-/*
-	@RequestMapping("/")
-    public String test (Model model) {
-        Iterable<WorkingTimeEntity> list = repository.findAll();
-        model.addAttribute("datas",list);
-    return "helo";
-*/
-/*   
-    @RequestMapping(value="/", method=RequestMethod.GET)
-    public ModelAndView index(ModelAndView mav) {
-        mav.setViewName("index");
-        mav.addObject("msg", "input your name :");    // 表示メッセージ
-        return mav;
-    }
 
-    @RequestMapping(value="/", method=RequestMethod.POST)
-    public ModelAndView send(@RequestParam("name")String name, 
-            ModelAndView mav) {
-        mav.setViewName("index");
-        mav.addObject("msg", "Hello " + name + " !");    // 表示メッセージ
-        mav.addObject("value", name);                    // 入力テキストに入力値を表示
-        return mav;
-    }
- */
 }

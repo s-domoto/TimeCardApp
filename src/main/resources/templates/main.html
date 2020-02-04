@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+<link href="/css/main.css" th:href="@{/css/main.css}" rel="stylesheet"></link>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+<script src="/js/main.js" th:src="@{/js/main.js}"></script>
+<title>TimeCard</title>
+</head>
+<body>
+<div class="header">
+	<a class="index" th:text="${userDataInfo}">ログイン</a>
+</div>
+<p id="todayDisp"></p>
+<p id="nowtimeDisp"></p>
+ <form method="post" action="/inTimeForm">
+	<button th:text="${inTimeText}" type="submit" class="btn-in" name="inTime" >IN</button> 
+ </form>
+ <form method="post" action="/outTimeForm">
+	<button th:text="${outTimeText}" type="submit" class="btn-out" name="outTime" >out</button> 
+ </form>
+<form action="#" th:action="@{/workingTimeTable}" method="post">
+	<button th:text="${workingTimeTable}" type="submit" class="btn-table" name="workingTimeTable" >勤務表</button> 
+</form>
+ <!--
+ <table border="1">
+ 	<tr th:each="workingTime : ${workingTimeList}" th:object="${workingTime}">
+ 		<td th:text="*{timeCardNo}"></td>
+ 		<td th:text="*{inTime}"></td>
+ 		<td th:text="*{outTime}"></td>
+ 	</tr>
+</table>
+-->
+</body>
+</html>

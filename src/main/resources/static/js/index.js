@@ -8,7 +8,7 @@ $(function(){
 		if(idStr == "" || passStr == ""){
 			$(".id").val(idStr);
 			$(".pass").val(passStr)
-			window.location.href = 'http://localhost:8080/login';
+			window.location.href = 'http://localhost:8080/index';
 			alert("IDとパスワードを入力してください。");
 			return false;
 		}

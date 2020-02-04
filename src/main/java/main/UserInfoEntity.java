@@ -19,7 +19,7 @@ public class UserInfoEntity {
 	@Column(name="PASS")
 	private String pass;
 	
-	public String getUserID() {
+	public String getUserId() {
         return this.userId;
     }
 	public String getName() {
@@ -28,7 +28,7 @@ public class UserInfoEntity {
 	public String getPass() {
         return this.pass;
     }
-	public void setTimeCardNo(String userId) {
+	public void setUserId(String userId) {
 		this.userId = userId;
 	}
 	public void setInTime(String name) {

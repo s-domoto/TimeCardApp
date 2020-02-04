@@ -16,7 +16,7 @@ public class WorkingTimeEntity {
 //	@GeneratedValue
     @GeneratedValue(strategy=GenerationType.IDENTITY)
 	private int timeCardNo;
-
+	
 	@Column(name="USERID")
 	private String userId;
 	
