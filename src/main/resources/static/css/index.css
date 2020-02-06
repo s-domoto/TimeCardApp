@@ -7,6 +7,13 @@ body {
   margin: 0;
 }
 
+h2 {
+  font-size: 32px;
+  color: #FFFFFF;
+  position: relative;
+  left: 80px;
+}
+
 input {
   border: none;
   font-family: 'Open Sans', Arial, sans-serif;
@@ -19,6 +26,10 @@ input {
 .container {
   margin: 50px auto;
   width: 320px;
+  position: absolute;
+  top: 40%;
+  left: 50%;
+  transform: translate(-50%, -50%);
 }
 
 .container form {
