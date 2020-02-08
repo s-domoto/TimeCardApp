@@ -8,10 +8,10 @@
 <title>TimeCard</title>
 </head>
 <body>
-<div class="header">
-	<a class="index" th:text="${userDataInfo}">ログイン</a>
-</div>
-
+<div class="container">
+<p class="login-user">
+ユーザー：<a class="index" th:text="${userDataInfo}">ログイン</a>
+</p>
 <p id="todayDisp"></p>
 <p id="nowtimeDisp"></p>
  <form method="post" action="/inTimeForm">
@@ -23,14 +23,6 @@
 <form action="#" th:action="@{/workingTimeTable}" method="post">
 	<button th:text="${workingTimeTable}" type="submit" class="btn-table" name="workingTimeTable" >勤務表</button> 
 </form>
- <!--
- <table border="1">
- 	<tr th:each="workingTime : ${workingTimeList}" th:object="${workingTime}">
- 		<td th:text="*{timeCardNo}"></td>
- 		<td th:text="*{inTime}"></td>
- 		<td th:text="*{outTime}"></td>
- 	</tr>
-</table>
--->
+</div>
 </body>
 </html>
