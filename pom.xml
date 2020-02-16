@@ -20,6 +20,10 @@
 
 	<dependencies>
 		<dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-security</artifactId>
+        </dependency>
+		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-web</artifactId>
 		</dependency>
@@ -33,9 +37,7 @@
 					<artifactId>junit-vintage-engine</artifactId>
 				</exclusion>
 			</exclusions>
-		</dependency>
-		
-		<!-- 追加: ここから -->
+		</dependency>		
     	<dependency>
         	<groupId>org.springframework.boot</groupId>
         	<artifactId>spring-boot-starter-thymeleaf</artifactId>
@@ -44,18 +46,19 @@
     	    <groupId>com.zaxxer</groupId>
     	    <artifactId>HikariCP</artifactId>
     	</dependency>
-<dependency>
-  <groupId>org.springframework.boot</groupId>
-  <artifactId>spring-boot-starter-data-jpa</artifactId>
-</dependency>
-<dependency>
-  <groupId>mysql</groupId>
-  <artifactId>mysql-connector-java</artifactId>
-  <scope>runtime</scope>
-</dependency>
-
-		
-    	<!-- 追加: ここまで -->
+		<dependency>
+  			<groupId>org.springframework.boot</groupId>
+  			<artifactId>spring-boot-starter-data-jpa</artifactId>
+		</dependency>
+		<dependency>
+  			<groupId>mysql</groupId>
+  			<artifactId>mysql-connector-java</artifactId>
+  			<scope>runtime</scope>
+		</dependency>
+		<dependency>
+        	<groupId>org.springframework.session</groupId>
+        	<artifactId>spring-session-jdbc</artifactId>
+        </dependency>
 <!-- 
 		<dependency>
     	    <groupId>com.oracle</groupId>
@@ -80,5 +83,4 @@
 			</plugin>
 		</plugins>
 	</build>
-
 </project>

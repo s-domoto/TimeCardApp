@@ -27,6 +27,9 @@ public interface TimeCardRepository extends JpaRepository<WorkingTimeEntity, Str
 	@Query(value="SELECT * FROM TIMECARD WHERE USERID = :userId", nativeQuery = true)
 	List<WorkingTimeEntity> findAllWorkingTime(@Param("userId") String userId);
 	
+	@Query(value="SELECT * FROM TIMECARD WHERE USERID = :userId AND DATE LIKE :date", nativeQuery = true)
+	List<WorkingTimeEntity> findWorkingTime(@Param("userId") String userId, @Param("date") String date);
+	
 	@Query(value="INSERT INTO TIMECARD VALUES(0, :userId, :date, :inTime, :outTime)", nativeQuery = true)
 	@Modifying
 	@Transactional

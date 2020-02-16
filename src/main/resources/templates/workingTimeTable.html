@@ -2,25 +2,64 @@
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
-<link href="/css/main.css" th:href="@{/css/main.css}" rel="stylesheet"></link>
+<link href="/css/workingTimeTable.css" th:href="@{/css/workingTimeTable.css}" rel="stylesheet"></link>
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
-<script src="/js/main.js" th:src="@{/js/main.js}"></script>
+<script src="/js/workingTimeTable.js" th:src="@{/js/workingTimeTable.js}"></script>
 <title>TimeCardTable</title>
 </head>
 <body>
-<div class="header">
-	<a class="login" th:text="${userDataInfo}">ログイン</a>
-</div>
+<div class="container">
+<p class="login-user">
+<!-- ユーザー：<a class="index" th:text="${userDataInfo}">ログイン</a> -->
+ユーザー：<a th:text="${userId}">ログイン</a>
+</p>
+<form method="get" action="/dateForm">
+<select name="year">
+<option value="">-</option>
+<option value="2020">2020</option>
+<option value="2021">2021</option>
+<option value="2022">2022</option>
+<option value="2023">2023</option>
+<option value="2024">2024</option>
+<option value="2025">2025</option>
+<option value="2026">2026</option>
+<option value="2027">2027</option>
+<option value="2028">2028</option>
+<option value="2029">2029</option>
+<option value="2030">2030</option>
+</select>　年
+<select name="month">
+<option value="">-</option>
+<option value="01">1</option>
+<option value="02">2</option>
+<option value="03">3</option>
+<option value="04">4</option>
+<option value="05">5</option>
+<option value="06">6</option>
+<option value="07">7</option>
+<option value="08">8</option>
+<option value="09">9</option>
+<option value="10">10</option>
+<option value="11">11</option>
+<option value="12">12</option>
+</select>　月
+<button type="submit" class="btn-date" name="date" >検索</button>
+</form>
+<p th:text="${ym}"></p>
  <table border="1">
+ 	<tr>
+ 		<th>日付</th>
+ 		<th>出勤時刻</th>
+  		<th>退勤時刻</th>
+ 	</tr>
  	<tr th:each="workingTime : ${workingTimeList}" th:object="${workingTime}">
- 		<td th:text="*{userId}"></td>
  		<td th:text="*{date}"></td>
  		<td th:text="*{inTime}"></td>
  		<td th:text="*{outTime}"></td>
  	</tr>
 </table>
-<form action="#" th:action="@{/main}" method="get">
+<form action="#" th:action="@{/main}" method="post">
 	<button type="submit" class="btn-return" name="return" >戻る</button> 
 </form>
-</body>
+</div>
 </html>

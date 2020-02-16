@@ -12,6 +12,9 @@ public interface UserInfoRepository extends JpaRepository<UserInfoEntity, String
 	
 	@Query(value="SELECT USERID, NAME, PASS FROM USER_INFO WHERE USERID = :userId AND PASS = :pass", nativeQuery = true)
 	List<UserInfoEntity> findUserInfo(@Param("userId") String userId, @Param("pass") String pass);
+	
+	@Query(value="SELECT USERID, NAME, PASS FROM USER_INFO WHERE USERID = :userId", nativeQuery = true)
+	List<UserInfoEntity> findUserInfo2(@Param("userId") String userId);
 /*	
 	@Query(value="SELECT * FROM USER_INFO " + 
 			"INNER JOIN TIMECARDb" + 

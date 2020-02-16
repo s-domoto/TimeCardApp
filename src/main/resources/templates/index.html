@@ -11,13 +11,19 @@
 <div class="wrapper">
     <div class="container">
     	<h2>タイムカード</h2>
-        <form class="form" action="#" th:action="@{/main}" method="post">
+        <form class="form" action="#" th:action="@{/sign_in}" method="post">
+        <div th:if="${param.error}">
+            Invalid username and password.
+        </div>
+        <div th:if="${param.logout}">
+            You have been logged out.
+        </div>
         <input class="id" type="text" name="id" placeholder="ユーザーID">
         <input class="pass" type="password" name="pass" placeholder="パスワード">
         <button class= "submit" type="submit" id="login-button">ログイン</button>
         </form>
     </div>
-    <div th:text="${userDataInfo}" ></div>
+<!--     <div th:text="${userDataInfo}" ></div> -->
 </div>
 </body>
 </html>

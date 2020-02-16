@@ -9,15 +9,17 @@
 </head>
 <body>
 <div class="container">
+ <!--       <h1 th:inline="text">Hello [[${#httpServletRequest.remoteUser}]]!</h1> -->
 <p class="login-user">
-ユーザー：<a class="index" th:text="${userDataInfo}">ログイン</a>
+<!-- ユーザー：<a class="index" th:text="${userDataInfo}">ログイン</a> -->
+ユーザー：<a th:text="${userId}">ログイン</a>
 </p>
 <p id="todayDisp"></p>
 <p id="nowtimeDisp"></p>
- <form method="post" action="/inTimeForm">
+ <form method="post" th:action="@{/inTimeForm}">
 	<button th:text="${inTimeText}" type="submit" class="btn-in" name="inTime" >IN</button> 
  </form>
- <form method="post" action="/outTimeForm">
+ <form method="post" th:action="@{/outTimeForm}">
 	<button th:text="${outTimeText}" type="submit" class="btn-out" name="outTime" >out</button> 
  </form>
 <form action="#" th:action="@{/workingTimeTable}" method="post">
