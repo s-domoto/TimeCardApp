@@ -61,20 +61,17 @@ public class TimeCardController {
 	}
 
 	@RequestMapping(value = "/main", method = RequestMethod.POST)
-	String postIndexForm(Model model/*,@RequestParam("id") String id*/) {		
-/*
-		userData = userInfoRepo.findUserInfo(id, pass);		
+	String postIndexForm(Model model) {		
 
-		if (userData.isEmpty()) {
-			model.addAttribute("userDataInfo", "ユーザIDもしくはパスワードが正しくありません。");
-			return "index";
-		} else {
-*/
 		Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         //Principalからログインユーザの情報を取得
         String userId = auth.getName();
         
-        workingTimeList = timeCardRepo.findWorkingTime(userId);
+        try {
+        	workingTimeList = timeCardRepo.findWorkingTime(userId);
+        }catch(Exception e) {
+        	e.printStackTrace();
+        }
 			
         // 出社打刻・退社打刻ともにされていない場合は「IN」、「OUT」を表示
         if (!(workingTimeList.get(0).getInTime().isEmpty()) && !(workingTimeList.get(0).getOutTime().isEmpty())) {
@@ -121,8 +118,11 @@ public class TimeCardController {
         //Principalからログインユーザの情報を取得
         String userId = auth.getName();
 		
-		workingTimeList = timeCardRepo.findWorkingTime(workingTimeList.get(0).getUserId());
-		
+        try {
+        	workingTimeList = timeCardRepo.findWorkingTime(workingTimeList.get(0).getUserId());
+        }catch(Exception e) {
+        	e.printStackTrace();
+        }
 		
 		// 日付と時間に分割
 		String[] inTimeArray = inTime.split(",", 0);
@@ -159,10 +159,14 @@ public class TimeCardController {
 			// 出社打刻・退社打刻ともにされていない場合は出社打刻する
 //			if(!(workingTimeList.get(0).getInTime().isEmpty()) && !(workingTimeList.get(0).getOutTime().isEmpty())) {
 			if(!(inTime == "")) {
-				timeCardRepo.insertWorkingTime(workingTimeList.get(0).getUserId(),
-						inTimeArray[0],
-						inTimeArray[1],
+				try {
+					timeCardRepo.insertWorkingTime(workingTimeList.get(0).getUserId(),
+							inTimeArray[0],
+							inTimeArray[1],
 						"");
+				}catch(Exception e) {
+					e.printStackTrace();
+				}
 				model.addAttribute("userId", userId);
 				model.addAttribute("inTimeText", inTimeArray[1]);
 				model.addAttribute("outTimeText", "OUT");
@@ -202,8 +206,12 @@ public class TimeCardController {
 		Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         //Principalからログインユーザの情報を取得
         String userId = auth.getName();
-		
-		workingTimeList = timeCardRepo.findWorkingTime(workingTimeList.get(0).getUserId());
+        
+        try {
+        	workingTimeList = timeCardRepo.findWorkingTime(workingTimeList.get(0).getUserId());
+        }catch(Exception e) {
+        	e.printStackTrace();
+        }
 		// 日付と時間に分割
 		String[] outTimeArray = outTime.split(",", 0);
 		
@@ -216,7 +224,11 @@ public class TimeCardController {
 			// 出社打刻がされている場合は退勤打刻を行う
 			if(!(workingTimeList.get(0).getInTime().isEmpty()) && workingTimeList.get(0).getOutTime().isEmpty()) {
 
-				timeCardRepo.updateOutTime(timeCardNo, outTimeArray[1]);
+				try {
+					timeCardRepo.updateOutTime(timeCardNo, outTimeArray[1]);
+				}catch(Exception e) {
+					e.printStackTrace();
+				}
 				model.addAttribute("userId", userId);
 				model.addAttribute("inTimeText", workingTimeList.get(0).getInTime());
 				model.addAttribute("outTimeText", outTimeArray[1]);
@@ -285,8 +297,12 @@ public class TimeCardController {
         //Principalからログインユーザの情報を取得
         String userId = auth.getName();
         
+        try {
         // ユーザーIDと取得年月から対象データを取得
-		workingTimeList = timeCardRepo.findWorkingTime(userId, date);
+        	workingTimeList = timeCardRepo.findWorkingTime(userId, date);
+        }catch(Exception e) {
+        	e.printStackTrace();
+        }
 
 		model.addAttribute("userId", userId);
         model.addAttribute("workingTimeList", workingTimeList);
