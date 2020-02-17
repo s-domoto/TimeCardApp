@@ -25,6 +25,9 @@
 <form action="#" th:action="@{/workingTimeTable}" method="post">
 	<button th:text="${workingTimeTable}" type="submit" class="btn-table" name="workingTimeTable" >勤務表</button> 
 </form>
+<form th:action="@{/logout}" method="post">
+	<button type="submit" class="btn-logout" value="logout" >ログアウト</button> 
+</form>
 </div>
 </body>
 </html>
