@@ -12,6 +12,9 @@ function showClock() {
 	   let nowMin  = date.getMinutes();
 	   let nowSec  = date.getSeconds();
 	   
+	   month = ('0' + month).slice(-2);
+	   day = ('0' + day).slice(-2);
+	   
 	   today = year + "-" + month + "-" + day;
 	   nowTime = nowHour + ":" + nowMin + ":" + nowSec;
 	   document.getElementById("todayDisp").innerHTML = today;

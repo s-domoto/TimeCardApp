@@ -4,6 +4,22 @@ body {
   background: #2f2b37;
 }
 
+table {
+border-collapse: collapse;
+text-align: left;
+line-height: 1.5;
+border: 1px solid #ccc;
+}
+table th {
+padding: 10px;
+font-weight: bold;
+border-top: 1px solid #ccc;
+border-right: 1px solid #ccc;
+border-bottom: 1px solid #ccc;
+background: #0099e3;
+color: #ffffff;
+}
+
 .container {
   background: #2f2b37;
   color: #606468;
