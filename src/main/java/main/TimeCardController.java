@@ -127,49 +127,9 @@ public class TimeCardController {
         	e.printStackTrace();
         }
         		
-		// 日付と時間に分割
-		String[] inTimeArray = inTime.split(",", 0);		
-
-		// 年、月、日に分割
-		String str = inTimeArray[0].replace("-", ",");	
-		String[] dateArray = str.split(",", 0);
-		
-//		int intWeekDay;
-		String strWeekDay = "";
-		
-		// 曜日を取得
-//		intWeekDay = cl.get(Calendar.DAY_OF_WEEK);
-		switch (cl.get(Calendar.DAY_OF_WEEK)) {
-	        case Calendar.SUNDAY: strWeekDay = "日"; break;
-	        case Calendar.MONDAY: strWeekDay = "月"; break;
-	        case Calendar.TUESDAY: strWeekDay = "火"; break;
-	        case Calendar.WEDNESDAY: strWeekDay = "水"; break;
-	        case Calendar.THURSDAY: strWeekDay = "木" ; break;
-	        case Calendar.FRIDAY: strWeekDay = "金"; break;
-	        case Calendar.SATURDAY: strWeekDay = "土"; break;
-	    }
-		
-		// 時刻を15分区切りに変換
-		String[] timeArray = new String[3];
-		timeArray = inTimeArray[1].split(":",0);
-		int min = Integer.parseInt(timeArray[1]);
-		int pause = 15;
-		int workTime = (min / pause) * pause;
-		
-		if(inTimeArray[1].compareTo( "9:00:00") != 1) {
-			timeArray[0] = "9";
-			timeArray[1] = "00";
-			timeArray[2] = "00";
-		}else {
-			timeArray[1] = String.valueOf(workTime);
-			timeArray[2] = "00";
-		}
-		
-		// 分割していた時刻を基の形に戻す
-		String time = timeArray[0] + ":" + timeArray[1] + ":" + timeArray[2];
 		
 		// 本日かどうか判定
-		if(workingTimeList.get(0).getDate() == sdf.format(cl.getTime())) {
+		if(workingTimeList.get(0).getDate().equals(sdf.format(cl.getTime()))) {
 
 			// 出社時間が空でない、かつ退社時間が空の場合
 			if(!(workingTimeList.get(0).getInTime().isEmpty()) && workingTimeList.get(0).getOutTime().isEmpty()) {
@@ -199,6 +159,48 @@ public class TimeCardController {
 			// 日付が変わっていたら打刻する
 			// 出社打刻・退社打刻ともにされていない場合は出社打刻する
 //			if(!(workingTimeList.get(0).getInTime().isEmpty()) && !(workingTimeList.get(0).getOutTime().isEmpty())) {
+			
+			// 日付と時間に分割
+			String[] inTimeArray = inTime.split(",", 0);		
+
+			// 年、月、日に分割
+			String str = inTimeArray[0].replace("-", ",");	
+			String[] dateArray = str.split(",", 0);
+			
+//			int intWeekDay;
+			String strWeekDay = "";
+			
+			// 曜日を取得
+//			intWeekDay = cl.get(Calendar.DAY_OF_WEEK);
+			switch (cl.get(Calendar.DAY_OF_WEEK)) {
+		        case Calendar.SUNDAY: strWeekDay = "日"; break;
+		        case Calendar.MONDAY: strWeekDay = "月"; break;
+		        case Calendar.TUESDAY: strWeekDay = "火"; break;
+		        case Calendar.WEDNESDAY: strWeekDay = "水"; break;
+		        case Calendar.THURSDAY: strWeekDay = "木" ; break;
+		        case Calendar.FRIDAY: strWeekDay = "金"; break;
+		        case Calendar.SATURDAY: strWeekDay = "土"; break;
+		    }
+			
+			// 時刻を15分区切りに変換
+			String[] timeArray = new String[3];
+			timeArray = inTimeArray[1].split(":",0);
+			int min = Integer.parseInt(timeArray[1]);
+			int pause = 15;
+			int workTime = (min / pause) * pause;
+			
+			if(inTimeArray[1].compareTo( "9:00:00") != 1) {
+				timeArray[0] = "9";
+				timeArray[1] = "00";
+				timeArray[2] = "00";
+			}else {
+				timeArray[1] = String.valueOf(workTime);
+				timeArray[2] = "00";
+			}
+			
+			// 分割していた時刻を基の形に戻す
+			String time = timeArray[0] + ":" + timeArray[1] + ":" + timeArray[2];
+			
 			if(!(inTime == "")) {
 				try {
 					timeCardRepo.insertWorkingTime(workingTimeList.get(0).getUserId(),
@@ -261,108 +263,110 @@ public class TimeCardController {
         }catch(Exception e) {
         	e.printStackTrace();
         }
-		// 日付と時間に分割
-		String[] outTimeArray = outTime.split(",", 0);
-		
-		// タイムカードNoを文字列に変換
-		String timeCardNo = String.valueOf((workingTimeList.get(0).getTimeCardNo()));
-		
-		// 年、月、日に分割
-		String str = outTimeArray[0].replace("-", ",");	
-		String[] dateArray = str.split(",", 0);
-						
-		// 時刻を15分区切りに変換
-		String[] timeArray = new String[3];
-		timeArray = outTimeArray[1].split(":",0);
-		int min = Integer.parseInt(timeArray[1]);
-		int pause = 15;
-		int workTime = (min / pause) * pause;
-	
-		timeArray[1] = String.valueOf(workTime);
-		timeArray[2] = "00";
-		
-		// 分の単位を合わせる
-		if(timeArray[1].equals("0")) {
-			timeArray[1] = "00";
-		}
-		
-		// 休憩時間
-		String breakTime = "";
-		// 残業時間
-		String overTime = "";
-		
-		
-		// 退勤時間(15分区切り)
-		String strEndTime = timeArray[0] + ":" + timeArray[1] + ":" + timeArray[2];		
-
-//		strEndTime = outTimeArray[0] + " " + strEndTime;
-		
-		// 出勤時間(15分区切り)
-		String strInTime = workingTimeList.get(0).getWorkStartTime();
-
-		String workStartTimeArray[] = strInTime.split(":", 0);
-		String workEndTimeArray[] = strEndTime.split(":", 0);
-
-		int startTime = Integer.parseInt(workStartTimeArray[0]) * 60 + Integer.parseInt(workStartTimeArray[1]) ;
-		int endTime = Integer.parseInt(workEndTimeArray[0]) * 60 + Integer.parseInt(workEndTimeArray[1]);
-		int diffTime = endTime - startTime;
-		int overHour = diffTime / 60;
-		int overMin = diffTime % 60;
-				
-		if(overHour >= 8) {
-			breakTime = "1:00";
-
-			switch (overMin) {
-			case 0: overTime = String.valueOf(overHour - 9) + ":00"; break;
-			case 15: overTime = String.valueOf(overHour - 9) + ":15"; break;
-			case 30: overTime = String.valueOf(overHour - 9) + ":30"; break;
-			case 45: overTime = String.valueOf(overHour - 9) + ":45"; break;
-			}
-
-		}else {
-			breakTime = "0:00";
-			overTime = "0:00";
-		}
-		// 残業時間を
-//		SimpleDateFormat formatter = new SimpleDateFormat("yy-MM-dd HH:mm:ss");
-//		Date startDateTime = new Date();
-//		Date endDateTime = new Date();
-//		
-//		
-//		try {
-//			startDateTime = formatter.parse(strInTime);
-//			endDateTime = formatter.parse(workEndTime);
-//		} catch (ParseException e1) {
-//			// TODO Auto-generated catch block
-//			e1.printStackTrace();
-//		}
-//		long diffTime = endDateTime.getTime() - startDateTime.getTime();
-//		SimpleDateFormat timeFormatter = new SimpleDateFormat ("HH:mm:ss Z");
-//		timeFormatter.setTimeZone(TimeZone.getTimeZone("GMT"));
-//		
-//		// 8時間以上の勤務時間
-//		String strDiffTime = timeFormatter.format(new Date(diffTime - 32400000));
-		
-		
-//		if(diffTime >= 32400000) {
-//			breakTime = "1:00";
-//			overTime = strDiffTime;
-//		}else {
-//			breakTime = "0:00";
-//			overTime = "0:00";
-//		}
-//		// 休憩時間を算出
-//		// 時間のみ取り出して数値に変換
-//		int intWorkStartTime = Integer.parseInt((workingTimeList.get(0).getWorkStartTime()).substring(0, 1));
-//		int intOutTime = Integer.parseInt((strOutTime));
-//		int resultTime = intOutTime - intWorkStartTime;
-//		
 		
 		// 本日かどうか判定
 		if(workingTimeList.get(0).getDate().toString().contentEquals(sdf.format(cl.getTime()).toString())) {
 
 			// 出社打刻がされている場合は退勤打刻を行う
 			if(!(workingTimeList.get(0).getInTime().isEmpty()) && workingTimeList.get(0).getOutTime().isEmpty()) {
+				
+				// 日付と時間に分割
+				String[] outTimeArray = outTime.split(",", 0);
+				
+				// タイムカードNoを文字列に変換
+				String timeCardNo = String.valueOf((workingTimeList.get(0).getTimeCardNo()));
+				
+				// 年、月、日に分割
+				String str = outTimeArray[0].replace("-", ",");	
+				String[] dateArray = str.split(",", 0);
+								
+				// 時刻を15分区切りに変換
+				String[] timeArray = new String[3];
+				timeArray = outTimeArray[1].split(":",0);
+				int min = Integer.parseInt(timeArray[1]);
+				int pause = 15;
+				int workTime = (min / pause) * pause;
+			
+				timeArray[1] = String.valueOf(workTime);
+				timeArray[2] = "00";
+				
+				// 分の単位を合わせる
+				if(timeArray[1].equals("0")) {
+					timeArray[1] = "00";
+				}
+				
+				// 休憩時間
+				String breakTime = "";
+				// 残業時間
+				String overTime = "";
+				
+				
+				// 退勤時間(15分区切り)
+				String strEndTime = timeArray[0] + ":" + timeArray[1] + ":" + timeArray[2];		
+
+//				strEndTime = outTimeArray[0] + " " + strEndTime;
+				
+				// 出勤時間(15分区切り)
+				String strInTime = workingTimeList.get(0).getWorkStartTime();
+
+				String workStartTimeArray[] = strInTime.split(":", 0);
+				String workEndTimeArray[] = strEndTime.split(":", 0);
+
+				int startTime = Integer.parseInt(workStartTimeArray[0]) * 60 + Integer.parseInt(workStartTimeArray[1]) ;
+				int endTime = Integer.parseInt(workEndTimeArray[0]) * 60 + Integer.parseInt(workEndTimeArray[1]);
+				int diffTime = endTime - startTime;
+				int overHour = diffTime / 60;
+				int overMin = diffTime % 60;
+						
+				if(overHour >= 8) {
+					breakTime = "1:00";
+
+					switch (overMin) {
+					case 0: overTime = String.valueOf(overHour - 9) + ":00"; break;
+					case 15: overTime = String.valueOf(overHour - 9) + ":15"; break;
+					case 30: overTime = String.valueOf(overHour - 9) + ":30"; break;
+					case 45: overTime = String.valueOf(overHour - 9) + ":45"; break;
+					}
+
+				}else {
+					breakTime = "0:00";
+					overTime = "0:00";
+				}
+				// 残業時間を
+//				SimpleDateFormat formatter = new SimpleDateFormat("yy-MM-dd HH:mm:ss");
+//				Date startDateTime = new Date();
+//				Date endDateTime = new Date();
+//				
+//				
+//				try {
+//					startDateTime = formatter.parse(strInTime);
+//					endDateTime = formatter.parse(workEndTime);
+//				} catch (ParseException e1) {
+//					// TODO Auto-generated catch block
+//					e1.printStackTrace();
+//				}
+//				long diffTime = endDateTime.getTime() - startDateTime.getTime();
+//				SimpleDateFormat timeFormatter = new SimpleDateFormat ("HH:mm:ss Z");
+//				timeFormatter.setTimeZone(TimeZone.getTimeZone("GMT"));
+//				
+//				// 8時間以上の勤務時間
+//				String strDiffTime = timeFormatter.format(new Date(diffTime - 32400000));
+				
+				
+//				if(diffTime >= 32400000) {
+//					breakTime = "1:00";
+//					overTime = strDiffTime;
+//				}else {
+//					breakTime = "0:00";
+//					overTime = "0:00";
+//				}
+//				// 休憩時間を算出
+//				// 時間のみ取り出して数値に変換
+//				int intWorkStartTime = Integer.parseInt((workingTimeList.get(0).getWorkStartTime()).substring(0, 1));
+//				int intOutTime = Integer.parseInt((strOutTime));
+//				int resultTime = intOutTime - intWorkStartTime;
+//				
+
 
 				try {
 					timeCardRepo.updateOutTime(timeCardNo, breakTime, overTime, outTimeArray[1], strEndTime);
@@ -445,6 +449,8 @@ public class TimeCardController {
         }
 
 		model.addAttribute("userId", userId);
+		model.addAttribute("year", workingTimeList.get(0).getYear() + "年");
+		model.addAttribute("month", workingTimeList.get(0).getMonth() + "月");
         model.addAttribute("workingTimeList", workingTimeList);
 		return "workingTimeTable";
 	}

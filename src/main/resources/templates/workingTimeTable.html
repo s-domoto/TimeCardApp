@@ -14,7 +14,7 @@
 ユーザー：<a th:text="${userId}">ログイン</a>
 </p>
 <form method="get" action="/dateForm">
-<select name="year">
+<select class="list-year" name="year">
 <option value="">-</option>
 <option value="2020">2020</option>
 <option value="2021">2021</option>
@@ -28,7 +28,7 @@
 <option value="2029">2029</option>
 <option value="2030">2030</option>
 </select>　年
-<select name="month">
+<select class="list-month" name="month">
 <option value="">-</option>
 <option value="01">1</option>
 <option value="02">2</option>
@@ -46,20 +46,36 @@
 <button type="submit" class="btn-date" name="date" >検索</button>
 </form>
 <p th:text="${ym}"></p>
- <table border="1">
+<table border="1">
+ 	<tr class="tr-date">
+ 		<td th:text="${year}">年</td>
+ 		<td th:text="${month}">月</td> 		
+ 	</tr>
+</table>
+<table border="1">
  	<tr>
- 		<th>日付</th>
- 		<th>出勤時刻</th>
+ 		<th>日</th>
+ 		<th>曜日</th>
+ 		<th>始業時間</th>
+  		<th>出勤時刻</th>
+ 		<th>終業時間</th>
   		<th>退勤時刻</th>
+ 		<th>休憩時間</th>
+ 		<th>残業時間</th>
  	</tr>
  	<tr th:each="workingTime : ${workingTimeList}" th:object="${workingTime}">
- 		<td th:text="*{date}"></td>
+ 		<td th:text="*{day}"></td>
+ 		<td th:text="*{weekDay}"></td>
+ 		<td th:text="*{workStartTime}"></td>
  		<td th:text="*{inTime}"></td>
+ 		<td th:text="*{workEndTime}"></td>
  		<td th:text="*{outTime}"></td>
+ 		<td th:text="*{breakTime}"></td>
+ 		<td th:text="*{overTime}"></td>
  	</tr>
 </table>
 <br>
-<form action="#" th:action="@{/main}" method="post">
+<form class="form-return" action="#" th:action="@{/main}" method="post">
 	<button type="submit" class="btn-return" name="return" >戻る</button> 
 </form>
 </div>

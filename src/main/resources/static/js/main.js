@@ -28,7 +28,7 @@ $(function(){
 				$(".btn-in").text(nowTime);
 				let date = today + "," + nowTime;
 				$(".btn-in").val(date);
-;
+//;
 			}
 	});
 	$(".btn-out").on('click', function() {

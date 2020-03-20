@@ -6,9 +6,10 @@ body {
 
 table {
 border-collapse: collapse;
-text-align: left;
+text-align: center;
 line-height: 1.5;
 border: 1px solid #ccc;
+font-size: 10px;
 }
 table th {
 padding: 10px;
@@ -31,7 +32,7 @@ color: #ffffff;
   border-bottom: 3px solid #434a52;
   
   margin: 50px auto;
-  width: 320px;
+  width: 440px;
   position: absolute;
   top: 40%;
   left: 50%;
@@ -57,6 +58,10 @@ color: #ffffff;
   cursor: pointer;
   transition: background 0.3s ease-in-out;
 }
+.form-return {
+	text-align:center;
+}
+
 .btn-return {
   background: #ff8913;
   border: 0;
