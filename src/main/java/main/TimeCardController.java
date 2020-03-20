@@ -1,9 +1,12 @@
 package main;
  
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Collections;
+import java.util.Date;
 import java.util.List;
+import java.util.TimeZone;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
@@ -38,7 +41,7 @@ public class TimeCardController {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         //Principalからログインユーザの情報を取得
         String userId = auth.getName();
-				
+		
 		if(workingTimeList.get(0).getInTime().isEmpty()) {
 			model.addAttribute("inTimeText", "IN");
 		}else {
@@ -123,9 +126,47 @@ public class TimeCardController {
         }catch(Exception e) {
         	e.printStackTrace();
         }
-		
+        		
 		// 日付と時間に分割
-		String[] inTimeArray = inTime.split(",", 0);
+		String[] inTimeArray = inTime.split(",", 0);		
+
+		// 年、月、日に分割
+		String str = inTimeArray[0].replace("-", ",");	
+		String[] dateArray = str.split(",", 0);
+		
+//		int intWeekDay;
+		String strWeekDay = "";
+		
+		// 曜日を取得
+//		intWeekDay = cl.get(Calendar.DAY_OF_WEEK);
+		switch (cl.get(Calendar.DAY_OF_WEEK)) {
+	        case Calendar.SUNDAY: strWeekDay = "日"; break;
+	        case Calendar.MONDAY: strWeekDay = "月"; break;
+	        case Calendar.TUESDAY: strWeekDay = "火"; break;
+	        case Calendar.WEDNESDAY: strWeekDay = "水"; break;
+	        case Calendar.THURSDAY: strWeekDay = "木" ; break;
+	        case Calendar.FRIDAY: strWeekDay = "金"; break;
+	        case Calendar.SATURDAY: strWeekDay = "土"; break;
+	    }
+		
+		// 時刻を15分区切りに変換
+		String[] timeArray = new String[3];
+		timeArray = inTimeArray[1].split(":",0);
+		int min = Integer.parseInt(timeArray[1]);
+		int pause = 15;
+		int workTime = (min / pause) * pause;
+		
+		if(inTimeArray[1].compareTo( "9:00:00") != 1) {
+			timeArray[0] = "9";
+			timeArray[1] = "00";
+			timeArray[2] = "00";
+		}else {
+			timeArray[1] = String.valueOf(workTime);
+			timeArray[2] = "00";
+		}
+		
+		// 分割していた時刻を基の形に戻す
+		String time = timeArray[0] + ":" + timeArray[1] + ":" + timeArray[2];
 		
 		// 本日かどうか判定
 		if(workingTimeList.get(0).getDate() == sdf.format(cl.getTime())) {
@@ -162,8 +203,16 @@ public class TimeCardController {
 				try {
 					timeCardRepo.insertWorkingTime(workingTimeList.get(0).getUserId(),
 							inTimeArray[0],
+							dateArray[0],
+							dateArray[1],
+							dateArray[2],
+							strWeekDay,
+							"",
+							"",
 							inTimeArray[1],
-						"");
+							"",
+							time,
+							"");
 				}catch(Exception e) {
 					e.printStackTrace();
 				}
@@ -218,6 +267,97 @@ public class TimeCardController {
 		// タイムカードNoを文字列に変換
 		String timeCardNo = String.valueOf((workingTimeList.get(0).getTimeCardNo()));
 		
+		// 年、月、日に分割
+		String str = outTimeArray[0].replace("-", ",");	
+		String[] dateArray = str.split(",", 0);
+						
+		// 時刻を15分区切りに変換
+		String[] timeArray = new String[3];
+		timeArray = outTimeArray[1].split(":",0);
+		int min = Integer.parseInt(timeArray[1]);
+		int pause = 15;
+		int workTime = (min / pause) * pause;
+	
+		timeArray[1] = String.valueOf(workTime);
+		timeArray[2] = "00";
+		
+		// 分の単位を合わせる
+		if(timeArray[1].equals("0")) {
+			timeArray[1] = "00";
+		}
+		
+		// 休憩時間
+		String breakTime = "";
+		// 残業時間
+		String overTime = "";
+		
+		
+		// 退勤時間(15分区切り)
+		String strEndTime = timeArray[0] + ":" + timeArray[1] + ":" + timeArray[2];		
+
+//		strEndTime = outTimeArray[0] + " " + strEndTime;
+		
+		// 出勤時間(15分区切り)
+		String strInTime = workingTimeList.get(0).getWorkStartTime();
+
+		String workStartTimeArray[] = strInTime.split(":", 0);
+		String workEndTimeArray[] = strEndTime.split(":", 0);
+
+		int startTime = Integer.parseInt(workStartTimeArray[0]) * 60 + Integer.parseInt(workStartTimeArray[1]) ;
+		int endTime = Integer.parseInt(workEndTimeArray[0]) * 60 + Integer.parseInt(workEndTimeArray[1]);
+		int diffTime = endTime - startTime;
+		int overHour = diffTime / 60;
+		int overMin = diffTime % 60;
+				
+		if(overHour >= 8) {
+			breakTime = "1:00";
+
+			switch (overMin) {
+			case 0: overTime = String.valueOf(overHour - 9) + ":00"; break;
+			case 15: overTime = String.valueOf(overHour - 9) + ":15"; break;
+			case 30: overTime = String.valueOf(overHour - 9) + ":30"; break;
+			case 45: overTime = String.valueOf(overHour - 9) + ":45"; break;
+			}
+
+		}else {
+			breakTime = "0:00";
+			overTime = "0:00";
+		}
+		// 残業時間を
+//		SimpleDateFormat formatter = new SimpleDateFormat("yy-MM-dd HH:mm:ss");
+//		Date startDateTime = new Date();
+//		Date endDateTime = new Date();
+//		
+//		
+//		try {
+//			startDateTime = formatter.parse(strInTime);
+//			endDateTime = formatter.parse(workEndTime);
+//		} catch (ParseException e1) {
+//			// TODO Auto-generated catch block
+//			e1.printStackTrace();
+//		}
+//		long diffTime = endDateTime.getTime() - startDateTime.getTime();
+//		SimpleDateFormat timeFormatter = new SimpleDateFormat ("HH:mm:ss Z");
+//		timeFormatter.setTimeZone(TimeZone.getTimeZone("GMT"));
+//		
+//		// 8時間以上の勤務時間
+//		String strDiffTime = timeFormatter.format(new Date(diffTime - 32400000));
+		
+		
+//		if(diffTime >= 32400000) {
+//			breakTime = "1:00";
+//			overTime = strDiffTime;
+//		}else {
+//			breakTime = "0:00";
+//			overTime = "0:00";
+//		}
+//		// 休憩時間を算出
+//		// 時間のみ取り出して数値に変換
+//		int intWorkStartTime = Integer.parseInt((workingTimeList.get(0).getWorkStartTime()).substring(0, 1));
+//		int intOutTime = Integer.parseInt((strOutTime));
+//		int resultTime = intOutTime - intWorkStartTime;
+//		
+		
 		// 本日かどうか判定
 		if(workingTimeList.get(0).getDate().toString().contentEquals(sdf.format(cl.getTime()).toString())) {
 
@@ -225,7 +365,7 @@ public class TimeCardController {
 			if(!(workingTimeList.get(0).getInTime().isEmpty()) && workingTimeList.get(0).getOutTime().isEmpty()) {
 
 				try {
-					timeCardRepo.updateOutTime(timeCardNo, outTimeArray[1]);
+					timeCardRepo.updateOutTime(timeCardNo, breakTime, overTime, outTimeArray[1], strEndTime);
 				}catch(Exception e) {
 					e.printStackTrace();
 				}

@@ -33,4 +33,4 @@ build/
 ### SVN ###
 *.svn
 *.svn-base
-svn/
+.svn/

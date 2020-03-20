@@ -16,7 +16,7 @@ import org.springframework.data.domain.Pageable;
 @Repository
 public interface TimeCardRepository extends JpaRepository<WorkingTimeEntity, String> {
 	
-	@Query(value="SELECT A.USERID, B.TIMECARDNO, B.DATE, COALESCE(B.INTIME, \"\") AS INTIME, COALESCE(B.OUTTIME, \"\") AS OUTTIME FROM USER_INFO A " + 
+	@Query(value="SELECT A.USERID, B.TIMECARDNO, B.DATE, B.YEAR, B.MONTH, B.DAY, B.WEEKDAY, B.BREAKTIME, B.OVERTIME, COALESCE(B.INTIME, \"\") AS INTIME, COALESCE(B.OUTTIME, \"\") AS OUTTIME, B.WORK_START_TIME, B.WORK_END_TIME FROM USER_INFO A " + 
 			"INNER JOIN TIMECARD B " + 
 			"ON A.USERID = B.USERID " + 
 			"WHERE " + 
@@ -30,13 +30,13 @@ public interface TimeCardRepository extends JpaRepository<WorkingTimeEntity, Str
 	@Query(value="SELECT * FROM TIMECARD WHERE USERID = :userId AND DATE LIKE :date", nativeQuery = true)
 	List<WorkingTimeEntity> findWorkingTime(@Param("userId") String userId, @Param("date") String date);
 	
-	@Query(value="INSERT INTO TIMECARD VALUES(0, :userId, :date, :inTime, :outTime)", nativeQuery = true)
+	@Query(value="INSERT INTO TIMECARD VALUES(0, :userId, :date, :year, :month, :day, :weekday, :breakTime, :overTime, :inTime, :outTime, :workStartTime, :workEndTime)", nativeQuery = true)
 	@Modifying
 	@Transactional
-	int insertWorkingTime(@Param("userId") String userId, @Param("date") String date, @Param("inTime") String inTime, @Param("outTime") String outTime);
+	int insertWorkingTime(@Param("userId") String userId, @Param("date") String date, @Param("year") String year, @Param("month") String month, @Param("day") String day, @Param("weekday") String weekday, @Param("breakTime") String breakTime, @Param("overTime") String overTime, @Param("inTime") String inTime, @Param("outTime") String outTime, @Param("workStartTime") String workStartTime, @Param("workEndTime") String workEndTime);
 	
-	@Query(value="UPDATE TIMECARD SET OUTTIME = :outTime WHERE TIMECARDNO = :timeCardNo", nativeQuery = true)
+	@Query(value="UPDATE TIMECARD SET BREAKTIME = :breakTime, OVERTIME = :overTime, OUTTIME = :outTime, WORK_END_TIME = :workEndTime WHERE TIMECARDNO = :timeCardNo", nativeQuery = true)
 	@Modifying
 	@Transactional
-	int updateOutTime(@Param("timeCardNo") String timeCardNo, @Param("outTime") String outTime);
+	int updateOutTime(@Param("timeCardNo") String timeCardNo, @Param("breakTime") String breakTime, @Param("overTime") String overTime, @Param("outTime") String outTime, @Param("workEndTime") String workEndTime);
 }
