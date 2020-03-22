@@ -46,10 +46,10 @@
 <button class="btn-date" name="date" >検索</button>
 </form>
 <p th:text="${ym}"></p>
-<table border="1">
+<table border="1" >
  	<tr class="tr-date">
  		<td th:text="${year}">年</td>
- 		<td th:text="${month}">月</td> 		
+ 		<td th:text="${month}" >月</td> 		
  	</tr>
 </table>
 <form class="form-csv"  action="#" th:action="@{/csvOutForm}" method="post">
@@ -76,12 +76,16 @@
  	</tr>
 </table>
 <br>
-	<button type="submit" class="btn-outCsv" name="outCsv"  >CSV出力</button>
-<!-- <a style="display:none;" id="downloader" href="#"></a>   -->
+	<button type="submit" class="btn-outCsv" name="outCsv" >CSV出力</button>
 </form>
 <form class="form-csv"  action="#" th:action="@{/csvInForm}" method="post">
-	<button type="submit" class="btn-InCsv" name="inCsv" >CSV入力</button>
+	<button type="submit" class="btn-inCsv" name="inCsv">CSV入力</button>
 </form>
+<!--
+<form class="form-excel"  action="#" th:action="@{/excelForm}" method="post">
+	<button type="submit" class="btn-excel" name="excel">EXCEL入力</button>
+</form>
+ -->
 <form class="form-return" action="#" th:action="@{/main}" method="post">
 	<button type="submit" class="btn-return" name="return" >戻る</button> 
 </form>

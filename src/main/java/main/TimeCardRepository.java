@@ -21,7 +21,7 @@ public interface TimeCardRepository extends JpaRepository<WorkingTimeEntity, Str
 			"ON A.USERID = B.USERID " + 
 			"WHERE " + 
 			"A.USERID = :userId " + 
-			"ORDER BY B.TIMECARDNO DESC LIMIT 1", nativeQuery = true)
+			"ORDER BY B.DATE DESC, B.OUTTIME DESC LIMIT 1", nativeQuery = true)
 	List<WorkingTimeEntity> findWorkingTime(@Param("userId") String userId);
 	
 	@Query(value="SELECT * FROM TIMECARD WHERE USERID = :userId", nativeQuery = true)
